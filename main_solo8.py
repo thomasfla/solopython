@@ -3,17 +3,13 @@ import numpy as np
 import argparse
 import math
 from time import clock, sleep
-from utils.viewerClient import viewerClient
-from solo8 import Solo8
+from solo8_ISAE import Solo8
 
 def example_script(name_interface):
-    viewer = viewerClient()
     device = Solo8(name_interface,dt=0.001)
     nb_motors = device.nb_motors
 
-    q_viewer = np.array((7 + nb_motors) * [0.,])
-
-    device.Init(calibrateEncoders=False)
+    device.Init(calibrateEncoders=True)
     #CONTROL LOOP ***************************************************
     while ((not device.hardware.IsTimeout()) and (clock() < 200)):
         device.UpdateMeasurment()
@@ -21,10 +17,6 @@ def example_script(name_interface):
         device.SendCommand(WaitEndOfCycle=True)
         if ((device.cpt % 100) == 0):
             device.Print()
-
-        q_viewer[3:7] = device.baseOrientation  # IMU Attitude
-        q_viewer[7:] = device.q_mes  # Encoders
-        viewer.display(q_viewer)
     #****************************************************************
     
     # Whatever happened we send 0 torques to the motors.
@@ -44,7 +36,6 @@ def main():
                         help='Name of the interface (use ifconfig in a terminal), for instance "enp1s0"')
 
     example_script(parser.parse_args().interface)
-
 
 if __name__ == "__main__":
     main()
