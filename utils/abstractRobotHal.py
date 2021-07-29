@@ -209,6 +209,11 @@ class RobotHAL():
         self.baseAccelerometer[:] = self.rotateImuVectors(
             [self.hardware.imu_data_accelerometer(0), self.hardware.imu_data_accelerometer(1), self.hardware.imu_data_accelerometer(2)])
 
+        # Power data from the powerboard
+        self.current = self.hardware.powerboard_current()
+        self.voltage = self.hardware.powerboard_voltage()
+        self.energy = self.hardware.powerboard_energy()
+
         return
 
     def SendCommand(self, WaitEndOfCycle=True):
@@ -265,6 +270,7 @@ class RobotHAL():
         print(chr(27) + "[2J")
         self.hardware.PrintIMU()
         self.hardware.PrintADC()
+        self.hardware.PrintPowerBoard()
         self.hardware.PrintMotors()
         self.hardware.PrintMotorDrivers()
         self.hardware.PrintStats()
